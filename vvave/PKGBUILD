@@ -1,0 +1,33 @@
+pkgname=vvave-git
+pkgver=r317.5081063
+pkgrel=1
+pkgdesc='Music player for KDE'
+arch=(x86_64 i686 arm armv6h armv7h aarch64)
+url="https://vvave.kde.org/"
+license=(GPL3)
+depends=(ki18n knotifications qt5-quickcontrols2 qt5-svg qt5-webengine qt5-websockets taglib kio mauikit-git kirigami2 gst-plugins-base gst-plugins-good gst-libav)
+makedepends=(git cmake extra-cmake-modules qt5-webengine gettext)
+optdepends=(gst-plugins-bad gst-plugins-ugly youtube-dl)
+provides=(vvave)
+conflicts=(vvave)
+replaces=(babe babe-qt babe-git)
+source=("${pkgname}::git+https://invent.kde.org/kde/vvave")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$pkgname"
+  cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+ 
+package() {
+  cd "$pkgname"
+  make INSTALL_ROOT="$pkgdir" install
+}
