@@ -1,0 +1,31 @@
+pkgname=dialer-git
+pkgver=r317.5081063
+pkgrel=1
+pkgdesc='Maui Contacts manager and dialer'
+arch=(x86_64 i686 arm armv6h armv7h aarch64)
+license=(GPL3)
+depends=(ki18n knotifications kcontacts kpeople qt5-quickcontrols2 qt5-svg qt5-webengine kio mauikit-git kirigami2 attica kconfig kservice)
+makedepends=(git cmake extra-cmake-modules gettext)
+optdepends=(gst-plugins-bad gst-plugins-ugly)
+provides=(dialer)
+conflicts=(dialer)
+source=("${pkgname}::git+https://invent.kde.org/kde/maui-dialer")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$pkgname"
+  cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+ 
+package() {
+  cd "$pkgname"
+  make DESTDIR="$pkgdir" install
+}
